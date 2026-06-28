@@ -2,357 +2,446 @@
 
 ![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=for-the-badge&logo=microsoft-azure&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Completed_✅-brightgreen?style=for-the-badge)
+![Calculator](https://img.shields.io/badge/Tool-Pricing_Calculator-FF6B35?style=for-the-badge)
 
 ---
 
-> **[Deutsch](#-deutsch)** · **[English](#-english)**
+> **[Deutsch](#deutsch)** &nbsp;·&nbsp; **[English](#english)**
 
 ---
 
 <br>
+<br>
 
-## Deutsch
+# Deutsch
 
-Hands-on Kostenanalyse mit dem [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator) — 6 Szenarien von der einfachen VM-Kalkulation bis zur Kostenfallen-Analyse.
+Hands-on Kostenanalyse mit dem [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator).  
+6 Szenarien — von der einfachen VM bis zur Kostenfallen-Jagd.
 
-📄 [Aufgabendokument (PDF)](docs/azure-cost-lab-tasks.pdf)
+📄 **[Aufgabendokument öffnen (PDF)](docs/azure-cost-lab-tasks.pdf)**
 
-### Inhaltsverzeichnis
+---
 
-| # | Aufgabe | Thema | Schwierigkeit |
-|---|---------|-------|--------------|
-| [A](#aufgabe-a--eine-einzelne-vm-kalkulieren) | Aufgabe A | Einzelne VM kalkulieren | 🟢 Leicht |
-| [B](#aufgabe-b--lizenzvergleich) | Aufgabe B | Hybrid Benefit vs. Pay-as-you-go | 🟢 Leicht |
-| [C](#aufgabe-c--regionsvergleich) | Aufgabe C | Regionsvergleich | 🟢 Leicht |
-| [D](#aufgabe-d--vm--storage-account) | Aufgabe D | VM + Storage Account | 🟡 Mittel |
-| [E](#aufgabe-e--vollständiges-szenario) | Aufgabe E | Vollständiges Team-Szenario | 🟡 Mittel |
-| [F](#aufgabe-f--kostenfallen-finden) | Aufgabe F | Kostenfallen finden | 🟠 Mittel+ |
+## 📋 Inhaltsverzeichnis
 
-### Kostenübersicht
+| | Aufgabe | Thema | Niveau |
+|--|---------|-------|--------|
+| 🔵 | [A — Einzelne VM](#a--einzelne-vm-kalkulieren) | VM-Kosten berechnen | 🟢 Leicht |
+| 🔵 | [B — Lizenzvergleich](#b--lizenzvergleich) | Hybrid Benefit vs. Pay-as-you-go | 🟢 Leicht |
+| 🔵 | [C — Regionsvergleich](#c--regionsvergleich) | Preisunterschiede je Region | 🟢 Leicht |
+| 🔵 | [D — VM + Storage](#d--vm--storage-account) | Kombination aus VM und Blob Storage | 🟡 Mittel |
+| 🔵 | [E — Team-Szenario](#e--vollständiges-team-szenario) | Vollständige Produktivumgebung | 🟡 Mittel |
+| 🔵 | [F — Kostenfallen](#f--kostenfallen-finden) | Fehler finden & Kosten senken | 🟠 Mittel+ |
+
+---
+
+## 💰 Kostenübersicht auf einen Blick
 
 | Aufgabe | Konfiguration | Monatlich |
 |---------|--------------|-----------|
-| **A** | B2s · Windows · 730h · West Europe | $46.77 |
-| **A** | B2s · Windows · 160h · West Europe | $14.85 |
-| **B** | D2s v3 · Pay-as-you-go · West Europe | $154.76 |
-| **B** | D2s v3 · Hybrid Benefit · West Europe | $87.60 |
-| **C** | B2ms · Linux · East US *(günstigste)* | $60.74 |
-| **C** | B2ms · Linux · Brazil South *(teuerste)* | $97.82 |
-| **D** | B2s + Blob LRS 100 GB · West Europe | $52.52 |
-| **E** | 2× VMs + Storage + SQL DB · North Europe | $110.94 |
-| **F** | Original — schlechte Konfiguration | $1,107.65 |
-| **F** | Optimiert | $44.16 |
+| **A** | B2s · Windows · 730h · West Europe | **$46.77** |
+| **A** | B2s · Windows · 160h (nur Werktage) | **$14.85** |
+| **B** | D2s v3 · Pay-as-you-go | **$154.76** |
+| **B** | D2s v3 · Azure Hybrid Benefit | **$87.60** |
+| **C** | B2ms · Linux · East US 🏆 günstigste | **$60.74** |
+| **C** | B2ms · Linux · Brazil South 💸 teuerste | **$97.82** |
+| **D** | B2s + Blob LRS 100 GB · West Europe | **$52.52** |
+| **E** | 2× VMs + Storage + SQL · North Europe | **$110.94** |
+| **F** | ❌ Original — schlechte Konfiguration | **$1,107.65** |
+| **F** | ✅ Optimiert | **$44.16** |
 
 ---
 
-#### Aufgabe A — Eine einzelne VM kalkulieren
+## A — Einzelne VM kalkulieren
 
-Monatliche Kosten eines Windows-Testservers berechnen — dann die Laufzeit auf Werktage reduzieren.
+> 💡 Wie viel kostet ein Windows-Testserver — und was passiert, wenn man ihn nur werktags laufen lässt?
 
 **Konfiguration:** `B2s` · `Windows` · `West Europe` · `128 GB Standard HDD` · `Pay-as-you-go`
 
-| Szenario | Stunden | Monatlich |
-|----------|---------|-----------|
-| 24/7 ganzer Monat | 730h | **$46.77** |
-| Nur Werktage (Mo–Fr, 8h/Tag) | 160h | **$14.85** |
-| 💾 Nur Disk (S10) | — | **≈ $5.28** |
+| Szenario | Stunden | Monatlich | Jährlich |
+|----------|---------|-----------|----------|
+| 🕐 24/7 ganzer Monat | 730h | **$46.77** | $561.24 |
+| 📅 Nur Werktage (Mo–Fr, 8h/Tag) | 160h | **$14.85** | $178.20 |
+| 💾 Nur Disk (S10, ohne VM) | — | **≈ $5.28** | $63.36 |
 
-> 💡 Laufzeit von 730h auf 160h reduzieren spart ~68%. Disk-Kosten laufen weiter, auch wenn die VM ausgeschaltet ist.
+> 🔑 **Erkenntnis:** Laufzeit von 730h → 160h reduzieren spart **~68%** auf Compute-Kosten.
+> Die Disk-Kosten laufen weiter — egal ob die VM an oder aus ist!
+
+![Task A – Kostenvergleich: $46.77 bei 730h Vollbetrieb vs $14.85 bei 160h Werktage, West Europe, B2s Windows VM](tasks/A-single-vm/screenshots/task-a-results.png)
+
+*Zwei Exports nebeneinander: 730h (Vollbetrieb) vs 160h (nur Werktage)*
 
 ---
 
-#### Aufgabe B — Lizenzvergleich
+## B — Lizenzvergleich
 
-Gleiche VM, zwei Lizenzmodelle — wie viel spart Azure Hybrid Benefit?
+> 💡 Gleiche VM, zwei Lizenzmodelle — Azure Hybrid Benefit kann Hunderte von Euro pro Jahr sparen.
 
 **Konfiguration:** `D2s v3` · `Windows` · `West Europe` · `730h`
 
-| Option | Monatlich | Jährlich |
-|--------|-----------|----------|
-| Pay-as-you-go | $154.76 | $1,857.12 |
-| Azure Hybrid Benefit | $87.60 | $1,051.20 |
-| 💚 Ersparnis | **$67.16 / Monat** | **$805.92 / Jahr** |
+| Lizenzmodell | Monatlich | Jährlich |
+|-------------|-----------|----------|
+| ❌ Pay-as-you-go (Lizenz inklusive) | $154.76 | $1,857.12 |
+| ✅ Azure Hybrid Benefit | $87.60 | $1,051.20 |
+| 💚 **Ersparnis** | **$67.16 / Monat** | **$805.92 / Jahr** |
 
-> 💡 AHB spart ~43% bei der Windows-Lizenz. Sinnvoll für Unternehmen mit bestehenden SA-Lizenzen.
+> 🔑 **Erkenntnis:** Azure Hybrid Benefit spart **~43%** bei der Windows-Lizenz.
+> Lohnt sich für Unternehmen mit bestehenden Windows Server Software Assurance Lizenzen.
+
+![Task B – Hybrid Benefit vs Pay-as-you-go Lizenzvergleich: $154.76 vs $87.60 monatlich, D2s v3 Windows VM, West Europe](tasks/B-hybrid-benefit/screenshots/task-b-results.png)
+
+*Pay-as-you-go vs Azure Hybrid Benefit — $67.16 Ersparnis pro Monat*
 
 ---
 
-#### Aufgabe C — Regionsvergleich
+## C — Regionsvergleich
 
-Azure-Preise unterscheiden sich je nach Region. Dieselbe Linux-VM in 3 Regionen vergleichen.
+> 💡 Azure-Preise sind nicht überall gleich — manchmal macht die Wahl der Region den größten Unterschied.
 
 **Konfiguration:** `B2ms` · `Linux` · `730h` · Kein Managed Disk
 
-| Region | Monatlich | vs. West Europe |
-|--------|-----------|----------------|
-| 🟢 **East US** | $60.74 | −13,3% |
-| 🟡 **West Europe** | $70.08 | — |
-| 🔴 **Brazil South** | $97.82 | **+39,6%** |
+| Region | Monatlich | vs. West Europe | vs. East US |
+|--------|-----------|----------------|-------------|
+| 🏆 **East US** | $60.74 | −13.3% | — günstigste |
+| **West Europe** | $70.08 | — | +15.4% teurer |
+| 💸 **Brazil South** | $97.82 | **+39.6% teurer** | +61.1% teurer |
 
-> 💡 Brazil South ist ~40% teurer wegen lokaler Steuern. East US hat das größte Microsoft-Rechenzentrum.
+> 🔑 **Erkenntnis:** Brazil South ist ~40% teurer als West Europe — wegen lokaler Steuern und begrenzter Infrastrukturkapazität.
+> East US ist günstig, weil dort das größte Microsoft-Rechenzentrum steht.
 
----
+![Task C – Regionsvergleich: East US günstigste Region $60.74, West Europe $70.08, Brazil South teuerste $97.82, B2ms Linux VM](tasks/C-region-comparison/screenshots/task-c-results.png)
 
-#### Aufgabe D — VM + Storage Account
-
-Kleine Web-App: VM mit Blob Storage. LRS vs. GRS Redundanz vergleichen.
-
-**Konfiguration:** `B2s` · `Windows` · `730h` · `128 GB Standard SSD` + `Blob 100 GB` · `West Europe`
-
-| Komponente | Monatlich |
-|------------|-----------|
-| VM (B2s + E10 SSD) | $50.48 |
-| Storage LRS | $2.04 |
-| **Gesamt (LRS)** | **$52.52** |
-| Gesamt (GRS) | $54.53 |
-| GRS Mehrkosten | +$2.01/Monat |
-
-> 💡 GRS verdoppelt die Kapazitätskosten UND die Schreibkosten — jeder Write wird in eine zweite Region repliziert.
+*3 Regionen, gleiche VM — bis zu 39.6% Preisunterschied*
 
 ---
 
-#### Aufgabe E — Vollständiges Szenario
+## D — VM + Storage Account
 
-Vollständige Umgebung für 10 Personen: 2 VMs, Storage, SQL-Datenbank.
+> 💡 Eine kleine Web-App: VM mit Blob Storage kombinieren — und LRS vs. GRS vergleichen.
+
+**Konfiguration:** `B2s` · `Windows` · `730h` · `128 GB Standard SSD (E10)` + `Blob 100 GB` · `West Europe`
+
+| Komponente | Monatlich | Jährlich |
+|------------|-----------|----------|
+| 🖥️ VM (B2s + E10 SSD) | $50.48 | $605.76 |
+| 💾 Storage (Blob LRS) | $2.04 | $24.48 |
+| **Gesamt (LRS)** | **$52.52** | **$630.24** |
+
+| Redundanz | Kopien | Monatlich | Mehrkosten |
+|-----------|--------|-----------|------------|
+| LRS (lokal) | 3 Kopien · 1 Rechenzentrum | $52.52 | — |
+| GRS (geografisch) | 6 Kopien · 2 Regionen | $54.53 | +$2.01 / Monat |
+
+> 🔑 **Erkenntnis:** GRS verdoppelt nicht nur die Kapazitätskosten — auch die Schreibkosten verdoppeln sich,
+> da jeder Write in die sekundäre Region repliziert wird ($0.054 → $0.108 pro 10K Operationen).
+
+![Task D – VM plus Blob Storage Kombination: $52.52 Gesamt mit LRS, $54.53 mit GRS, West Europe, B2s Windows VM](tasks/D-vm-storage/screenshots/task-d-results.png)
+
+*VM + Blob Storage — LRS vs. GRS Kostenaufschlüsselung*
+
+---
+
+## E — Vollständiges Team-Szenario
+
+> 💡 Eine echte Produktivumgebung für 10 Personen: 2 VMs, Storage und SQL-Datenbank — welche Komponente dominiert die Kosten?
 
 **Konfiguration:** `North Europe` · D2s v3 (AHB) · B1ms · LRS 200 GB · SQL Basic
 
-| Komponente | Monatlich | % der Kosten |
-|------------|-----------|-------------|
-| VM1 — D2s v3 (AHB) | $97.31 | 87,7% |
-| VM2 — B1ms (160h) | $4.19 | 3,8% |
-| Storage LRS 200 GB | $4.54 | 4,1% |
-| SQL DB Basic | $4.90 | 4,4% |
-| **Gesamt (PAYG)** | **$110.94** | |
-| **Gesamt (VM1 Reserved 1 Jahr)** | **$84.00** | |
-| 💚 Jährliche Ersparnis | — | **$323.28 (24,3%)** |
+| Komponente | Monatlich | % der Gesamtkosten | Jährlich |
+|------------|-----------|-------------------|----------|
+| 🔴 VM1 — D2s v3 (AHB, 730h, 256 GB SSD) | $97.31 | **87.7%** | $1,167.72 |
+| VM2 — B1ms (PAYG, nur 160h) | $4.19 | 3.8% | $50.28 |
+| Storage — LRS 200 GB | $4.54 | 4.1% | $54.48 |
+| SQL DB — Basic 5 DTU | $4.90 | 4.4% | $58.80 |
+| **Gesamt (Pay-as-you-go)** | **$110.94** | 100% | **$1,331.28** |
+| **Gesamt (VM1 Reserved 1 Jahr)** | **$84.00** | — | **$1,007.99** |
+| 💚 Ersparnis durch Reservierung | $26.94 | — | **$323.28 (24.3%)** |
 
-> 💡 VM-Compute macht 87,7% der Gesamtkosten aus. Nur VM1 zu reservieren spart $323 pro Jahr.
+> 🔑 **Erkenntnis:** VM1 allein macht **87.7%** der Gesamtrechnung aus.
+> Nur VM1 auf Reserved (1 Jahr) umstellen → **$323 jährliche Ersparnis** bei nur einer Änderung!
+
+![Task E – Vollständiges Team-Szenario: $110.94 pro Monat über 4 Azure-Dienste, VM1 dominiert mit 87.7% der Gesamtkosten, North Europe](tasks/E-full-scenario/screenshots/task-e-results.png)
+
+*4 Dienste, VM1 = 87.7% der Gesamtkosten — Reserved Instance spart $323.28/Jahr*
 
 ---
 
-#### Aufgabe F — Kostenfallen finden
+## F — Kostenfallen finden
 
-Eine schlecht konfigurierte Umgebung mit 6 Kostenfallen. Finden, beheben, Ersparnis messen.
+> 💡 Jemand hat eine Umgebung gebaut — mit 6 teuren Fehlern. Alles gefunden, alles gefixt.
 
-| # | Kostenfalle | Original | Optimiert |
-|---|------------|----------|-----------|
-| 🔴 1 | Region | Brazil South | West Europe |
-| 🔴 2 | VM-Größe | D8s v3 (8 vCPU) | D4s v3 (4 vCPU) |
-| 🔴 3 | Laufzeit | 730h (24/7) | 180h (Mo–Fr 09–18) |
-| 🔴 4 | Lizenz | Pay-as-you-go | Hybrid Benefit |
-| 🔴 5 | Disk | 1 TB Premium SSD | 128 GB Standard SSD |
-| 🔴 6 | Storage | GRS + 1000 GB Transfer | LRS 50 GB |
+**❌ Originalkonfiguration — 6 Kostenfallen:**
+
+| # | Kostenfalle | Original | Problem |
+|---|------------|----------|---------|
+| 🔴 1 | Region | Brazil South | Teuerste Region — ohne Notwendigkeit |
+| 🔴 2 | VM-Größe | D8s v3 (8 vCPU) | App läuft nur Mo–Fr 09–18 — massiv überdimensioniert |
+| 🔴 3 | Laufzeit | 730h (24/7) | VM läuft 550 Stunden unnötig pro Monat |
+| 🔴 4 | Lizenz | Pay-as-you-go | Kein Hybrid Benefit — doppelt für Lizenz zahlen |
+| 🔴 5 | Disk | 1 TB Premium SSD | 20× zu groß für 50 GB Bedarf |
+| 🔴 6 | Storage | GRS + 1000 GB Geo-Transfer | $141/Monat nur für 50 GB Storage! |
+
+| Parameter | ❌ Original | ✅ Optimiert |
+|-----------|-----------|------------|
+| Region | Brazil South | West Europe |
+| VM | D8s v3 · 8 vCPU | D4s v3 · 4 vCPU |
+| Laufzeit | 730h (24/7) | 180h (Mo–Fr 09–18) |
+| Lizenz | Pay-as-you-go | Azure Hybrid Benefit |
+| Disk | 1 TB Premium SSD | 128 GB Standard SSD |
+| Storage | GRS + 1000 GB Transfer | LRS · 50 GB |
 
 | | Monatlich | Jährlich |
 |--|-----------|----------|
-| 🔴 Original | $1,107.65 | $13,291.80 |
-| 🟢 Optimiert | $44.16 | $529.92 |
+| ❌ Original | $1,107.65 | $13,291.80 |
+| ✅ Optimiert | $44.16 | $529.92 |
 | 💚 **Ersparnis** | **$1,063.49** | **$12,761.88** |
 
-## 🏆 96% günstiger — 6 Kostenfallen behoben
+# 🏆 96% günstiger — durch 6 einfache Fixes!
 
-> 💡 Eine schlechte Konfiguration kann 25× teurer sein als eine optimierte.
+> 🔑 **Erkenntnis:** Eine schlechte Konfiguration kann **25× teurer** sein als eine optimierte.
+> Region + VM-Größe + Laufzeit sind die drei größten Hebel.
+
+![Task F – Original Konfiguration $1,107.65 pro Monat in Brazil South vs optimierte Version $44.16 pro Monat in West Europe](tasks/F-cost-traps/screenshots/task-f-original-config.png)
+
+*Original vs. Optimiert — Exporte aus dem Pricing Calculator*
+
+![Task F – Kostenfallen Analyse: 6 identifizierte Probleme und 96% Kostenreduktion durch Optimierung der Azure Konfiguration](tasks/F-cost-traps/screenshots/task-f-cost-trap-analysis.png)
+
+*Alle 6 Kostenfallen identifiziert und behoben — 96% Einsparung*
 
 ---
 
-### 🧠 Wichtigste Erkenntnisse
+## 🧠 Die wichtigsten Lektionen
 
-| # | Erkenntnis |
-|---|-----------|
-| 1 | 🌍 Die Region ist entscheidend — bis zu 40% Preisunterschied |
-| 2 | 🪟 Hybrid Benefit spart ~43% bei Windows-Lizenzen |
-| 3 | ⏱️ Idle VMs stoppen ist der schnellste Spareffekt |
-| 4 | 📦 Überdimensionierte VMs und Disks sind stille Kostenkiller |
-| 5 | 💾 GRS verdoppelt Storage- UND Schreibkosten |
-| 6 | 📅 Reserved Instances sparen ~34% bei stabilen Workloads |
-| 7 | 🔍 Eine schlechte Konfiguration kann 25× teurer sein |
+| # | Lektion | Warum wichtig? |
+|---|---------|----------------|
+| 1 | 🌍 Region ist entscheidend | Bis zu 40% Preisunterschied — immer vergleichen |
+| 2 | 🪟 Hybrid Benefit nutzen | ~43% Ersparnis bei Windows-Lizenzen — oft vergessen |
+| 3 | ⏱️ VM-Laufzeit optimieren | Idle VMs stoppen = sofortige Einsparung |
+| 4 | 📦 Richtig dimensionieren | Überdimensionierte VMs & Disks fressen Budget |
+| 5 | 💾 LRS vs. GRS abwägen | GRS verdoppelt Kosten — nur wo nötig einsetzen |
+| 6 | 📅 Reserved Instances | 1-Jahr-Bindung → ~34% Ersparnis bei stabilen Workloads |
+| 7 | 🔍 Alles hinterfragen | Eine schlechte Config kann 25× teurer sein |
 
 ---
 
 <br>
+<br>
+<br>
 
-## English
+# English
 
-Hands-on cost analysis using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator) — 6 real-world scenarios from single VM pricing to finding costly misconfigurations.
+Hands-on cost analysis using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator).  
+6 scenarios — from a single VM all the way to hunting down costly misconfigurations.
 
-📄 [Original Task Document (PDF)](docs/azure-cost-lab-tasks.pdf)
+📄 **[Open Task Document (PDF)](docs/azure-cost-lab-tasks.pdf)**
 
-### Table of Contents
+---
 
-| # | Task | Topic | Difficulty |
-|---|------|--------|------------|
-| [A](#task-a--single-vm-pricing) | Task A | Single VM Pricing | 🟢 Easy |
-| [B](#task-b--license-comparison) | Task B | Hybrid Benefit vs. Pay-as-you-go | 🟢 Easy |
-| [C](#task-c--region-comparison) | Task C | Region Price Comparison | 🟢 Easy |
-| [D](#task-d--vm--storage-account) | Task D | VM + Storage Account | 🟡 Medium |
-| [E](#task-e--full-scenario) | Task E | Full Team Environment | 🟡 Medium |
-| [F](#task-f--find-the-cost-traps) | Task F | Find the Cost Traps | 🟠 Medium+ |
+## 📋 Table of Contents
 
-### Cost Summary
+| | Task | Topic | Difficulty |
+|--|------|--------|------------|
+| 🔵 | [A — Single VM](#a--single-vm-pricing) | Calculate VM costs | 🟢 Easy |
+| 🔵 | [B — License Comparison](#b--license-comparison) | Hybrid Benefit vs. Pay-as-you-go | 🟢 Easy |
+| 🔵 | [C — Region Comparison](#c--region-comparison) | Price differences per region | 🟢 Easy |
+| 🔵 | [D — VM + Storage](#d--vm--storage-account-1) | VM combined with Blob Storage | 🟡 Medium |
+| 🔵 | [E — Team Scenario](#e--full-team-scenario) | Complete productivity environment | 🟡 Medium |
+| 🔵 | [F — Cost Traps](#f--find-the-cost-traps) | Find mistakes & cut costs | 🟠 Medium+ |
+
+---
+
+## 💰 Cost Summary at a Glance
 
 | Task | Configuration | Monthly |
 |------|--------------|---------|
-| **A** | B2s · Windows · 730h · West Europe | $46.77 |
-| **A** | B2s · Windows · 160h · West Europe | $14.85 |
-| **B** | D2s v3 · Pay-as-you-go · West Europe | $154.76 |
-| **B** | D2s v3 · Hybrid Benefit · West Europe | $87.60 |
-| **C** | B2ms · Linux · East US *(cheapest)* | $60.74 |
-| **C** | B2ms · Linux · Brazil South *(most expensive)* | $97.82 |
-| **D** | B2s + Blob LRS 100 GB · West Europe | $52.52 |
-| **E** | 2× VMs + Storage + SQL DB · North Europe | $110.94 |
-| **F** | Original — bad config | $1,107.65 |
-| **F** | Optimized | $44.16 |
+| **A** | B2s · Windows · 730h · West Europe | **$46.77** |
+| **A** | B2s · Windows · 160h (weekdays only) | **$14.85** |
+| **B** | D2s v3 · Pay-as-you-go | **$154.76** |
+| **B** | D2s v3 · Azure Hybrid Benefit | **$87.60** |
+| **C** | B2ms · Linux · East US 🏆 cheapest | **$60.74** |
+| **C** | B2ms · Linux · Brazil South 💸 most expensive | **$97.82** |
+| **D** | B2s + Blob LRS 100 GB · West Europe | **$52.52** |
+| **E** | 2× VMs + Storage + SQL · North Europe | **$110.94** |
+| **F** | ❌ Original — bad configuration | **$1,107.65** |
+| **F** | ✅ Optimized | **$44.16** |
 
 ---
 
-#### Task A — Single VM Pricing
+## A — Single VM Pricing
 
-Calculate the monthly cost of a Windows test server — then reduce runtime to weekdays only.
+> 💡 How much does a Windows test server cost — and what happens when you only run it on weekdays?
 
 **Config:** `B2s` · `Windows` · `West Europe` · `128 GB Standard HDD` · `Pay-as-you-go`
 
-| Scenario | Hours | Monthly |
-|----------|-------|---------|
-| 24/7 full month | 730h | **$46.77** |
-| Weekdays only (Mo–Fr, 8h/day) | 160h | **$14.85** |
-| 💾 Disk only (S10) | — | **≈ $5.28** |
+| Scenario | Hours | Monthly | Annual |
+|----------|-------|---------|--------|
+| 🕐 24/7 full month | 730h | **$46.77** | $561.24 |
+| 📅 Weekdays only (Mo–Fr, 8h/day) | 160h | **$14.85** | $178.20 |
+| 💾 Disk only (S10, no VM) | — | **≈ $5.28** | $63.36 |
 
-> 💡 Reducing runtime from 730h → 160h saves ~68%. Disk cost stays the same whether the VM is on or off.
+> 🔑 **Key insight:** Reducing runtime from 730h → 160h saves **~68%** on compute costs.
+> However, disk costs keep running regardless of whether the VM is on or off!
 
-![Task A – Single VM cost comparison: $46.77 at 730h vs $14.85 at 160h in West Europe](tasks/A-single-vm/screenshots/task-a-results.png)
-*Two exports: 730h full month vs 160h weekdays only*
+![Task A – Cost comparison: $46.77 at 730h full runtime vs $14.85 at 160h weekdays only, West Europe, B2s Windows VM](tasks/A-single-vm/screenshots/task-a-results.png)
+
+*Two exports side by side: 730h (full month) vs 160h (weekdays only)*
 
 ---
 
-#### Task B — License Comparison
+## B — License Comparison
 
-Same VM, two licensing options — see how much Azure Hybrid Benefit saves.
+> 💡 Same VM, two licensing models — Azure Hybrid Benefit can save hundreds of dollars per year.
 
 **Config:** `D2s v3` · `Windows` · `West Europe` · `730h`
 
-| Option | Monthly | Annual |
-|--------|---------|--------|
-| Pay-as-you-go | $154.76 | $1,857.12 |
-| Azure Hybrid Benefit | $87.60 | $1,051.20 |
-| 💚 Saving | **$67.16 / mo** | **$805.92 / yr** |
+| License Model | Monthly | Annual |
+|--------------|---------|--------|
+| ❌ Pay-as-you-go (License included) | $154.76 | $1,857.12 |
+| ✅ Azure Hybrid Benefit | $87.60 | $1,051.20 |
+| 💚 **Saving** | **$67.16 / month** | **$805.92 / year** |
 
-> 💡 AHB saves ~43% on Windows licensing. Best for orgs with existing Windows Server SA licenses.
+> 🔑 **Key insight:** Azure Hybrid Benefit saves **~43%** on the Windows license.
+> Best for organizations with existing Windows Server Software Assurance licenses.
 
-![Task B – Hybrid Benefit vs Pay-as-you-go: $154.76 vs $87.60, saving $67.16 per month on D2s v3](tasks/B-hybrid-benefit/screenshots/task-b-results.png)
+![Task B – Hybrid Benefit vs Pay-as-you-go license comparison: $154.76 vs $87.60 monthly, D2s v3 Windows VM, West Europe](tasks/B-hybrid-benefit/screenshots/task-b-results.png)
+
 *Pay-as-you-go vs Azure Hybrid Benefit — $67.16/month difference*
 
 ---
 
-#### Task C — Region Comparison
+## C — Region Comparison
 
-Azure prices vary by region. Compare the same Linux VM across 3 regions.
+> 💡 Azure prices are not the same everywhere — sometimes the choice of region makes the biggest difference.
 
-**Config:** `B2ms` · `Linux` · `730h` · No managed disk
+**Config:** `B2ms` · `Linux` · `730h` · No Managed Disk
 
-| Region | Monthly | vs. West Europe |
-|--------|---------|----------------|
-| 🟢 **East US** | $60.74 | −13.3% |
-| 🟡 **West Europe** | $70.08 | — |
-| 🔴 **Brazil South** | $97.82 | **+39.6%** |
+| Region | Monthly | vs. West Europe | vs. East US |
+|--------|---------|----------------|-------------|
+| 🏆 **East US** | $60.74 | −13.3% | — cheapest |
+| **West Europe** | $70.08 | — | +15.4% more |
+| 💸 **Brazil South** | $97.82 | **+39.6% more** | +61.1% more |
 
-> 💡 Brazil South is ~40% more expensive due to local taxes. East US benefits from Microsoft's largest data center footprint.
+> 🔑 **Key insight:** Brazil South is ~40% more expensive than West Europe — due to local taxes and limited infrastructure capacity.
+> East US is cheap because Microsoft's largest data center is located there.
 
-![Task C – Region comparison: East US cheapest at $60.74, West Europe $70.08, Brazil South most expensive at $97.82](tasks/C-region-comparison/screenshots/task-c-results.png)
+![Task C – Region comparison: East US cheapest $60.74, West Europe $70.08, Brazil South most expensive $97.82, B2ms Linux VM](tasks/C-region-comparison/screenshots/task-c-results.png)
+
 *3 regions, same VM — up to 39.6% price difference*
 
 ---
 
-#### Task D — VM + Storage Account
+## D — VM + Storage Account
 
-Small web app setup: VM with Blob Storage. Compare LRS vs GRS redundancy.
+> 💡 A small web app: combine a VM with Blob Storage — and compare LRS vs. GRS redundancy.
 
-**Config:** `B2s` · `Windows` · `730h` · `128 GB Standard SSD` + `Blob 100 GB` · `West Europe`
+**Config:** `B2s` · `Windows` · `730h` · `128 GB Standard SSD (E10)` + `Blob 100 GB` · `West Europe`
 
-| Component | Monthly |
-|-----------|---------|
-| VM (B2s + E10 SSD) | $50.48 |
-| Storage LRS | $2.04 |
-| **Total (LRS)** | **$52.52** |
-| Total (GRS) | $54.53 |
-| GRS extra | +$2.01/mo |
+| Component | Monthly | Annual |
+|-----------|---------|--------|
+| 🖥️ VM (B2s + E10 SSD) | $50.48 | $605.76 |
+| 💾 Storage (Blob LRS) | $2.04 | $24.48 |
+| **Total (LRS)** | **$52.52** | **$630.24** |
 
-> 💡 GRS doubles capacity cost AND write operation cost — every write is replicated to a second region.
+| Redundancy | Copies | Monthly | Extra Cost |
+|------------|--------|---------|------------|
+| LRS (local) | 3 copies · 1 data center | $52.52 | — |
+| GRS (geo) | 6 copies · 2 regions | $54.53 | +$2.01 / month |
 
-![Task D – VM plus Storage: $52.52/month total with LRS, rising to $54.53 with GRS redundancy](tasks/D-vm-storage/screenshots/task-d-results.png)
-*VM + Blob Storage — LRS vs GRS cost breakdown*
+> 🔑 **Key insight:** GRS doesn't just double capacity costs — write operation costs double too,
+> because every write gets replicated to the secondary region ($0.054 → $0.108 per 10K ops).
+
+![Task D – VM plus Blob Storage combination: $52.52 total with LRS, $54.53 with GRS, West Europe, B2s Windows VM](tasks/D-vm-storage/screenshots/task-d-results.png)
+
+*VM + Blob Storage — LRS vs. GRS cost breakdown*
 
 ---
 
-#### Task E — Full Scenario
+## E — Full Team Scenario
 
-Full environment for a team of 10: 2 VMs, Storage, SQL Database.
+> 💡 A real productivity environment for 10 people: 2 VMs, Storage and SQL Database — which component dominates the costs?
 
 **Config:** `North Europe` · D2s v3 (AHB) · B1ms · LRS 200 GB · SQL Basic
 
-| Component | Monthly | % of Total |
-|-----------|---------|-----------|
-| VM1 — D2s v3 (AHB) | $97.31 | 87.7% |
-| VM2 — B1ms (160h) | $4.19 | 3.8% |
-| Storage LRS 200 GB | $4.54 | 4.1% |
-| SQL DB Basic | $4.90 | 4.4% |
-| **Total (PAYG)** | **$110.94** | |
-| **Total (VM1 Reserved 1yr)** | **$84.00** | |
-| 💚 Annual saving | — | **$323.28 (24.3%)** |
+| Component | Monthly | % of Total | Annual |
+|-----------|---------|-----------|--------|
+| 🔴 VM1 — D2s v3 (AHB, 730h, 256 GB SSD) | $97.31 | **87.7%** | $1,167.72 |
+| VM2 — B1ms (PAYG, 160h only) | $4.19 | 3.8% | $50.28 |
+| Storage — LRS 200 GB | $4.54 | 4.1% | $54.48 |
+| SQL DB — Basic 5 DTU | $4.90 | 4.4% | $58.80 |
+| **Total (Pay-as-you-go)** | **$110.94** | 100% | **$1,331.28** |
+| **Total (VM1 Reserved 1 Year)** | **$84.00** | — | **$1,007.99** |
+| 💚 Saving from reservation | $26.94 | — | **$323.28 (24.3%)** |
 
-> 💡 VM compute accounts for 87.7% of the bill. Reserving just VM1 saves $323/year.
+> 🔑 **Key insight:** VM1 alone makes up **87.7%** of the total bill.
+> Switch only VM1 to Reserved (1 Year) → **$323 annual saving** with just one change!
 
-![Task E – Full team environment: $110.94/month across 4 services, VM1 dominates at 87.7% of total cost](tasks/E-full-scenario/screenshots/task-e-results.png)
-*4 services — VM1 = 87.7% of total cost*
+![Task E – Full team scenario: $110.94 per month across 4 Azure services, VM1 dominates at 87.7% of total cost, North Europe](tasks/E-full-scenario/screenshots/task-e-results.png)
+
+*4 services, VM1 = 87.7% of total cost — Reserved Instance saves $323.28/year*
 
 ---
 
-#### Task F — Find the Cost Traps
+## F — Find the Cost Traps
 
-A poorly configured environment with 6 cost traps. Find them, fix them, measure the saving.
+> 💡 Someone built an environment — with 6 expensive mistakes. All found, all fixed.
 
-| # | Trap | Original | Fixed |
-|---|------|----------|-------|
-| 🔴 1 | Region | Brazil South | West Europe |
-| 🔴 2 | VM Size | D8s v3 (8 vCPU) | D4s v3 (4 vCPU) |
-| 🔴 3 | Runtime | 730h (24/7) | 180h (Mo–Fr 09–18) |
-| 🔴 4 | License | Pay-as-you-go | Hybrid Benefit |
-| 🔴 5 | Disk | 1 TB Premium SSD | 128 GB Standard SSD |
-| 🔴 6 | Storage | GRS + 1000 GB transfer | LRS 50 GB |
+**❌ Original Configuration — 6 Cost Traps:**
+
+| # | Cost Trap | Original | Problem |
+|---|-----------|----------|---------|
+| 🔴 1 | Region | Brazil South | Most expensive region — for no reason |
+| 🔴 2 | VM Size | D8s v3 (8 vCPU) | App runs Mo–Fr 09–18 only — massively oversized |
+| 🔴 3 | Runtime | 730h (24/7) | VM runs 550 unnecessary hours per month |
+| 🔴 4 | License | Pay-as-you-go | No Hybrid Benefit — paying double for the license |
+| 🔴 5 | Disk | 1 TB Premium SSD | 20× too large for a 50 GB need |
+| 🔴 6 | Storage | GRS + 1000 GB Geo-Transfer | $141/month just for 50 GB of storage! |
+
+| Parameter | ❌ Original | ✅ Optimized |
+|-----------|-----------|------------|
+| Region | Brazil South | West Europe |
+| VM | D8s v3 · 8 vCPU | D4s v3 · 4 vCPU |
+| Runtime | 730h (24/7) | 180h (Mo–Fr 09–18) |
+| License | Pay-as-you-go | Azure Hybrid Benefit |
+| Disk | 1 TB Premium SSD | 128 GB Standard SSD |
+| Storage | GRS + 1000 GB Transfer | LRS · 50 GB |
 
 | | Monthly | Annual |
 |--|---------|--------|
-| 🔴 Original | $1,107.65 | $13,291.80 |
-| 🟢 Optimized | $44.16 | $529.92 |
+| ❌ Original | $1,107.65 | $13,291.80 |
+| ✅ Optimized | $44.16 | $529.92 |
 | 💚 **Saving** | **$1,063.49** | **$12,761.88** |
 
-## 🏆 96% cheaper — 6 traps fixed
+# 🏆 96% cheaper — with 6 simple fixes!
 
-> 💡 One bad config can cost 25× more than an optimized equivalent.
+> 🔑 **Key insight:** A bad configuration can be **25× more expensive** than an optimized one.
+> Region + VM size + runtime are the three biggest levers.
 
-![Task F – Original config $1,107.65/month vs optimized $44.16/month from Azure Pricing Calculator](tasks/F-cost-traps/screenshots/task-f-original-config.png)
-*Original vs Optimized — Pricing Calculator exports*
+![Task F – Original configuration $1,107.65 per month in Brazil South vs optimized version $44.16 per month in West Europe](tasks/F-cost-traps/screenshots/task-f-original-config.png)
 
-![Task F – Cost trap analysis: 6 identified issues and 96% cost reduction](tasks/F-cost-traps/screenshots/task-f-cost-trap-analysis.png)
-*All 6 cost traps identified and fixed*
+*Original vs. Optimized — exports from the Pricing Calculator*
 
----
+![Task F – Cost trap analysis: 6 identified problems and 96% cost reduction through Azure configuration optimization](tasks/F-cost-traps/screenshots/task-f-cost-trap-analysis.png)
 
-### 🧠 Key Takeaways
-
-| # | Lesson |
-|---|--------|
-| 1 | 🌍 Region matters — up to 40% price difference |
-| 2 | 🪟 Hybrid Benefit saves ~43% on Windows licensing |
-| 3 | ⏱️ Shutting down idle VMs is the fastest win |
-| 4 | 📦 Oversized VMs and disks are silent cost killers |
-| 5 | 💾 GRS doubles storage AND write costs |
-| 6 | 📅 Reserved Instances save ~34% on stable workloads |
-| 7 | 🔍 One bad config can cost 25× more |
+*All 6 cost traps identified and fixed — 96% saving*
 
 ---
 
-### 🛠️ Tools Used
+## 🧠 Key Takeaways
+
+| # | Lesson | Why it matters |
+|---|--------|----------------|
+| 1 | 🌍 Region is everything | Up to 40% price difference — always compare |
+| 2 | 🪟 Use Hybrid Benefit | ~43% saving on Windows licenses — often overlooked |
+| 3 | ⏱️ Optimize VM runtime | Stopping idle VMs = instant saving |
+| 4 | 📦 Right-size everything | Oversized VMs & disks silently drain your budget |
+| 5 | 💾 Think before choosing GRS | GRS doubles costs — only use it where truly needed |
+| 6 | 📅 Use Reserved Instances | 1-year commitment → ~34% saving on stable workloads |
+| 7 | 🔍 Question everything | One bad config can cost 25× more |
+
+---
+
+## 🛠️ Tools
 
 ![Azure Pricing Calculator](https://img.shields.io/badge/Azure_Pricing_Calculator-0078D4?style=flat-square&logo=microsoft-azure&logoColor=white)
 ![Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=flat-square&logo=microsoft-excel&logoColor=white)
@@ -360,7 +449,7 @@ A poorly configured environment with 6 cost traps. Find them, fix them, measure 
 
 ---
 
-### 📁 Repository Structure
+## 📁 Repository Structure
 
 ```
 azure-pricing-lab/
@@ -379,3 +468,4 @@ azure-pricing-lab/
 ---
 
 > *Prices in USD — Azure Pricing Calculator, June 2026. Prices may vary.*
+> *Preise in USD — Azure Pricing Calculator, Juni 2026. Preisänderungen vorbehalten.*
